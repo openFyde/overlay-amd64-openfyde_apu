@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2020 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<MediaCodecs>
+    <Decoders>
+        <MediaCodec name="c2.vda.avc.decoder" type="video/avc" update="true">
+            <!-- measured 93%:763-1954 med:847 SLOW -->
+            <Limit name="measured-frame-rate-320x240" range="846-1222" /> <!-- N=30 v93%=1.6 -->
+            <!-- measured 93%:587-1393 med:789 SLOW -->
+            <Limit name="measured-frame-rate-720x480" range="789-905" /> <!-- N=30 v93%=1.5 -->
+            <Limit name="measured-frame-rate-1280x720" range="552-552" /> <!-- N=62 v97%=1.6 -->
+            <Limit name="measured-frame-rate-1920x1088" range="283-283" /> <!-- N=30 v93%=1.5 -->
+        </MediaCodec>
+        <MediaCodec name="c2.vda.vp9.decoder" type="video/x-vnd.on2.vp9" update="true">
+            <!-- Low-resolution performance is very sensitive to small
+                 changes. For test stability, set a wider range. -->
+            <Limit name="measured-frame-rate-320x180" range="600-1320" />
+            <Limit name="measured-frame-rate-640x360" range="400-880" />
+            <Limit name="measured-frame-rate-1280x720" range="464-464" />
+            <Limit name="measured-frame-rate-1920x1080" range="305-305" />
+            <Limit name="measured-frame-rate-3840x2160" range="78-78" />
+        </MediaCodec>
+    </Decoders>
+    <Encoders>
+        <MediaCodec name="c2.vea.avc.encoder" type="video/avc" update="true">
+            <Limit name="measured-frame-rate-320x240" range="371-371" />
+            <Limit name="measured-frame-rate-720x480" range="94-170" />
+            <Limit name="measured-frame-rate-1280x720" range="52-114" />
+            <Limit name="measured-frame-rate-1920x1080" range="28-60" />
+        </MediaCodec>
+    </Encoders>
+</MediaCodecs>
