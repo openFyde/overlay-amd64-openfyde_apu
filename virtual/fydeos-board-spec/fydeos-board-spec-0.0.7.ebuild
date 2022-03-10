@@ -15,6 +15,8 @@ RDEPEND="
     chromeos-base/device-appid
     net-wireless/broadcom-sta
     chromeos-base/arc-codec-chipset-picasso
+    chromeos-base/google-drive-fs
+    chromeos-base/fydeos-power-daemon-go
 "
 
 DEPEND="${RDEPEND}"

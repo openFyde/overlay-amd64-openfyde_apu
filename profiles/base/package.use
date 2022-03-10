@@ -1,1 +1,2 @@
 sys-devel/arc-llvm
+>=sys-kernel/chromeos-kernel-5_10-9999 -apply_patches
