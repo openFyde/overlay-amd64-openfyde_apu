@@ -1,3 +1,4 @@
 chromeos-base/device-appid::amd64-openfyde
 net-wireless/rtl8821ce-driver::openfyde-drivers
 virtual/opengles::reven
+virtual/vulkan-icd::amd64-openfyde
