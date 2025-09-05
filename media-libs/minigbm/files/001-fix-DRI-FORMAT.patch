@@ -1,0 +1,35 @@
+diff --git a/dri.h b/dri.h
+index 955b950..a46f6e9 100644
+--- a/dri.h
++++ b/dri.h
+@@ -7,6 +7,30 @@
+ #ifdef DRV_AMDGPU
+ 
+ #include "drv.h"
++#define __DRI_IMAGE_FORMAT_RGB565       0x1001
++#define __DRI_IMAGE_FORMAT_XRGB8888     0x1002
++#define __DRI_IMAGE_FORMAT_ARGB8888     0x1003
++#define __DRI_IMAGE_FORMAT_ABGR8888     0x1004
++#define __DRI_IMAGE_FORMAT_XBGR8888     0x1005
++#define __DRI_IMAGE_FORMAT_R8           0x1006 /* Since version 5 */
++#define __DRI_IMAGE_FORMAT_GR88         0x1007
++#define __DRI_IMAGE_FORMAT_NONE         0x1008
++#define __DRI_IMAGE_FORMAT_XRGB2101010  0x1009
++#define __DRI_IMAGE_FORMAT_ARGB2101010  0x100a
++#define __DRI_IMAGE_FORMAT_SARGB8       0x100b
++#define __DRI_IMAGE_FORMAT_ARGB1555     0x100c
++#define __DRI_IMAGE_FORMAT_R16          0x100d
++#define __DRI_IMAGE_FORMAT_GR1616       0x100e
++#define __DRI_IMAGE_FORMAT_YUYV         0x100f
++#define __DRI_IMAGE_FORMAT_XBGR2101010  0x1010
++#define __DRI_IMAGE_FORMAT_ABGR2101010  0x1011
++#define __DRI_IMAGE_FORMAT_SABGR8       0x1012
++#define __DRI_IMAGE_FORMAT_UYVY         0x1013
++#define __DRI_IMAGE_FORMAT_XBGR16161616F 0x1014
++#define __DRI_IMAGE_FORMAT_ABGR16161616F 0x1015
++#define __DRI_IMAGE_FORMAT_SXRGB8       0x1016
++#define __DRI_IMAGE_FORMAT_ABGR16161616 0x1017
++#define __DRI_IMAGE_FORMAT_XBGR16161616 0x1018
+ 
+ struct dri_driver;
+ 

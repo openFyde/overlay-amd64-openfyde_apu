@@ -1,0 +1,110 @@
+[
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "./x86_64-cros-linux-gnu-gcc.real",
+            "--sysroot=/usr/x86_64-cros-linux-gnu",
+            "-Wno-maybe-uninitialized",
+            "-Wno-unused-local-typedefs",
+            "-Wno-deprecated-declarations",
+            "-Wtrampolines",
+            "-static-libgcc",
+            "-march=goldmont",
+            "main.cc",
+            "-L/usr/x86_64-cros-linux-gnu/usr/lib64",
+            "-mno-movbe"
+          ],
+          "env_updates": [
+            "CCACHE_DIR=/var/cache/distfiles/ccache",
+            "CCACHE_UMASK=002"
+          ],
+          "path": "/usr/bin/ccache"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "-march=goldmont",
+          "main.cc"
+        ],
+        "path": "./x86_64-cros-linux-gnu-gcc"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "./x86_64-cros-linux-gnu-gcc.real",
+            "--sysroot=/usr/x86_64-cros-linux-gnu",
+            "-Wno-maybe-uninitialized",
+            "-Wno-unused-local-typedefs",
+            "-Wno-deprecated-declarations",
+            "-Wtrampolines",
+            "-static-libgcc",
+            "-march=goldmont-plus",
+            "main.cc",
+            "-L/usr/x86_64-cros-linux-gnu/usr/lib64",
+            "-mno-movbe"
+          ],
+          "env_updates": [
+            "CCACHE_DIR=/var/cache/distfiles/ccache",
+            "CCACHE_UMASK=002"
+          ],
+          "path": "/usr/bin/ccache"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "-march=goldmont-plus",
+          "main.cc"
+        ],
+        "path": "./x86_64-cros-linux-gnu-gcc"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "./x86_64-cros-linux-gnu-gcc.real",
+            "--sysroot=/usr/x86_64-cros-linux-gnu",
+            "-Wno-maybe-uninitialized",
+            "-Wno-unused-local-typedefs",
+            "-Wno-deprecated-declarations",
+            "-Wtrampolines",
+            "-static-libgcc",
+            "-march=skylake",
+            "main.cc",
+            "-L/usr/x86_64-cros-linux-gnu/usr/lib64",
+            "-mno-movbe"
+          ],
+          "env_updates": [
+            "CCACHE_DIR=/var/cache/distfiles/ccache",
+            "CCACHE_UMASK=002"
+          ],
+          "path": "/usr/bin/ccache"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "-march=skylake",
+          "main.cc"
+        ],
+        "path": "./x86_64-cros-linux-gnu-gcc"
+      }
+    }
+  }
+]

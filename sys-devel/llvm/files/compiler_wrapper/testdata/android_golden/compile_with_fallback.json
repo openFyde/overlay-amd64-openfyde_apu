@@ -1,0 +1,115 @@
+[
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "main.cc",
+            "-fno-color-diagnostics",
+            "-a",
+            "-b"
+          ],
+          "path": "/tmp/stable/clang-real"
+        }
+      }
+    ],
+    "env": [
+      "ANDROID_LLVM_PREBUILT_COMPILER_PATH=fallback_compiler",
+      "ANDROID_LLVM_STDERR_REDIRECT=/tmp/stable/fallback_stderr",
+      "ANDROID_LLVM_FALLBACK_DISABLED_WARNINGS=-a -b"
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "main.cc"
+        ],
+        "path": "/tmp/stable/clang"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "main.cc",
+            "-fno-color-diagnostics",
+            "-a",
+            "-b"
+          ],
+          "path": "/tmp/stable/clang-real"
+        },
+        "exitcode": 1
+      },
+      {
+        "cmd": {
+          "args": [
+            "main.cc"
+          ],
+          "env_updates": [
+            "ANDROID_LLVM_PREBUILT_COMPILER_PATH="
+          ],
+          "path": "fallback_compiler/clang"
+        }
+      }
+    ],
+    "env": [
+      "ANDROID_LLVM_PREBUILT_COMPILER_PATH=fallback_compiler",
+      "ANDROID_LLVM_STDERR_REDIRECT=/tmp/stable/fallback_stderr",
+      "ANDROID_LLVM_FALLBACK_DISABLED_WARNINGS=-a -b"
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "main.cc"
+        ],
+        "path": "/tmp/stable/clang"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "main.cc",
+            "-fno-color-diagnostics",
+            "-a",
+            "-b"
+          ],
+          "path": "/tmp/stable/clang-real"
+        },
+        "exitcode": 1
+      },
+      {
+        "cmd": {
+          "args": [
+            "main.cc"
+          ],
+          "env_updates": [
+            "ANDROID_LLVM_PREBUILT_COMPILER_PATH="
+          ],
+          "path": "fallback_compiler/clang"
+        },
+        "exitcode": 1
+      }
+    ],
+    "env": [
+      "ANDROID_LLVM_PREBUILT_COMPILER_PATH=fallback_compiler",
+      "ANDROID_LLVM_STDERR_REDIRECT=/tmp/stable/fallback_stderr",
+      "ANDROID_LLVM_FALLBACK_DISABLED_WARNINGS=-a -b"
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "main.cc"
+        ],
+        "path": "/tmp/stable/clang"
+      },
+      "exitcode": 1
+    }
+  }
+]

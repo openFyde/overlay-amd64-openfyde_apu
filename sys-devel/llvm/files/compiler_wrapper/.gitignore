@@ -1,0 +1,3 @@
+# The `install_compiler_wrapper.sh` script may leave this hanging around;
+# we never actually want to commit the `compiler_wrapper` binary. Leave it.
+compiler_wrapper

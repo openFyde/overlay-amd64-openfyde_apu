@@ -1,0 +1,161 @@
+[
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "-Wno-maybe-uninitialized",
+            "-Wno-unused-local-typedefs",
+            "-Wno-deprecated-declarations",
+            "-fcommon",
+            "main.cc"
+          ],
+          "path": "./x86_64-cros-linux-gnu-gcc.real"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "main.cc"
+        ],
+        "path": "./x86_64-cros-linux-gnu-gcc"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "-Wno-maybe-uninitialized",
+            "-Wno-unused-local-typedefs",
+            "-Wno-deprecated-declarations",
+            "-fcommon",
+            "main.cc"
+          ],
+          "path": "./x86_64-cros-linux-gnu-gcc.real"
+        },
+        "exitcode": 1,
+        "stderr": "someerror",
+        "stdout": "somemessage"
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "main.cc"
+        ],
+        "path": "./x86_64-cros-linux-gnu-gcc"
+      },
+      "exitcode": 1,
+      "stderr": "someerror",
+      "stdout": "somemessage"
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "-Wno-maybe-uninitialized",
+            "-Wno-unused-local-typedefs",
+            "-Wno-deprecated-declarations",
+            "-fcommon",
+            "main.cc"
+          ],
+          "path": "/tmp/stable/x86_64-cros-linux-gnu-gcc.real"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "main.cc"
+        ],
+        "path": "/tmp/stable/x86_64-cros-linux-gnu-gcc"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "-Wno-maybe-uninitialized",
+            "-Wno-unused-local-typedefs",
+            "-Wno-deprecated-declarations",
+            "-fcommon",
+            "main.cc"
+          ],
+          "path": "./a/b/c/d/e/f/g/x86_64-cros-linux-gnu-gcc.real"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "main.cc"
+        ],
+        "path": "./a/b/c/d/e/f/g/x86_64-cros-linux-gnu-gcc"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "-Wno-maybe-uninitialized",
+            "-Wno-unused-local-typedefs",
+            "-Wno-deprecated-declarations",
+            "-fcommon",
+            "main.cc"
+          ],
+          "path": "./symlinked/x86_64-cros-linux-gnu-gcc.real"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "main.cc"
+        ],
+        "path": "./symlinked/x86_64-cros-linux-gnu-gcc"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "-Wno-maybe-uninitialized",
+            "-Wno-unused-local-typedefs",
+            "-Wno-deprecated-declarations",
+            "-fcommon",
+            "main.cc"
+          ],
+          "path": "/tmp/stable/pathenv/x86_64-cros-linux-gnu-gcc.real"
+        }
+      }
+    ],
+    "env": [
+      "PATH=/tmp/stable/pathenv"
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "main.cc"
+        ],
+        "path": "x86_64-cros-linux-gnu-gcc"
+      }
+    }
+  }
+]

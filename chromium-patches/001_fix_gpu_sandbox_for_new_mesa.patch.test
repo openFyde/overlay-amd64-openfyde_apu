@@ -1,0 +1,24 @@
+diff --git a/content/common/gpu_pre_sandbox_hook_linux.cc b/content/common/gpu_pre_sandbox_hook_linux.cc
+index 97f7221cb1a56..519345b8a2202 100644
+--- a/content/common/gpu_pre_sandbox_hook_linux.cc
++++ b/content/common/gpu_pre_sandbox_hook_linux.cc
+@@ -600,6 +600,7 @@ void LoadArmGpuLibraries() {
+ 
+ bool LoadAmdGpuLibraries() {
+   // Preload the amdgpu-dependent libraries.
++#if 0
+   if (nullptr == dlopen("libglapi.so", dlopen_flag)) {
+     LOG(ERROR) << "dlopen(libglapi.so) failed with error: " << dlerror();
+     return false;
+@@ -613,6 +614,11 @@ bool LoadAmdGpuLibraries() {
+     LOG(ERROR) << "dlopen(radeonsi_dri.so) failed with error: " << dlerror();
+     return false;
+   }
++#endif
++	if (nullptr == dlopen("libgallium_dri.so", dlopen_flag)) {
++    LOG(ERROR) << "dlopen(libgallium_dri.so) failed with error: " << dlerror();
++    return false;
++  }
+   return true;
+ }
+ 

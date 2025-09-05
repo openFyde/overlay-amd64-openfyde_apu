@@ -1,0 +1,31 @@
+From 1473817c0c324703155a6e6c600e04f7917cb05b Mon Sep 17 00:00:00 2001
+From: Drew Davenport <ddavenport@chromium.org>
+Date: Thu, 2 Jan 2020 09:23:52 -0700
+Subject: [PATCH] Don't install static libraries if they're not requested.
+
+https://crbug.com/906078
+---
+ cmake/modules/AddLLVM.cmake | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/cmake/modules/AddLLVM.cmake b/cmake/modules/AddLLVM.cmake
+index b5f612469ff..6677fea9f27 100644
+--- a/cmake/modules/AddLLVM.cmake
++++ b/cmake/modules/AddLLVM.cmake
+@@ -924,6 +924,13 @@ macro(add_llvm_tool name)
+               RUNTIME DESTINATION ${LLVM_TOOLS_INSTALL_DIR}
+               COMPONENT ${name})
+ 
++      if(ARG_SHARED OR NOT LLVM_BUILD_LLVM_DYLIB)
++        install(TARGETS ${name}
++                ${export_to_llvmexports}
++                ${install_type} DESTINATION ${install_dir}
++                COMPONENT ${name})
++      endif()
++
+       if (NOT LLVM_ENABLE_IDE)
+         add_llvm_install_targets(install-${name}
+                                  DEPENDS ${name}
+-- 
+2.24.1.735.g03f4e72817-goog
+

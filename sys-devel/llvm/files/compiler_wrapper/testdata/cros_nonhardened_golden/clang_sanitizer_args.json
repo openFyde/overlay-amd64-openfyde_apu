@@ -1,0 +1,400 @@
+[
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "../../usr/bin/clang",
+            "--sysroot=/usr/x86_64-cros-linux-gnu",
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-section",
+            "-static-libgcc",
+            "--prefix=../../bin/x86_64-cros-linux-gnu-",
+            "-fsanitize=kernel-address",
+            "main.cc",
+            "-L/usr/x86_64-cros-linux-gnu/usr/lib64",
+            "-mno-movbe",
+            "-B../../bin",
+            "-target",
+            "x86_64-cros-linux-gnu"
+          ],
+          "env_updates": [
+            "CCACHE_DIR=/var/cache/distfiles/ccache",
+            "CCACHE_UMASK=002",
+            "CCACHE_CPP2=yes"
+          ],
+          "path": "/usr/bin/ccache"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "-fsanitize=kernel-address",
+          "-Wl,--no-undefined",
+          "main.cc"
+        ],
+        "path": "./x86_64-cros-linux-gnu-clang"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "../../usr/bin/clang",
+            "--sysroot=/usr/x86_64-cros-linux-gnu",
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-section",
+            "-static-libgcc",
+            "--prefix=../../bin/x86_64-cros-linux-gnu-",
+            "-fsanitize=kernel-address",
+            "main.cc",
+            "-L/usr/x86_64-cros-linux-gnu/usr/lib64",
+            "-mno-movbe",
+            "-B../../bin",
+            "-target",
+            "x86_64-cros-linux-gnu"
+          ],
+          "env_updates": [
+            "CCACHE_DIR=/var/cache/distfiles/ccache",
+            "CCACHE_UMASK=002",
+            "CCACHE_CPP2=yes"
+          ],
+          "path": "/usr/bin/ccache"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "-fsanitize=kernel-address",
+          "-Wl,-z,defs",
+          "main.cc"
+        ],
+        "path": "./x86_64-cros-linux-gnu-clang"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "../../usr/bin/clang",
+            "--sysroot=/usr/x86_64-cros-linux-gnu",
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-section",
+            "-static-libgcc",
+            "--prefix=../../bin/x86_64-cros-linux-gnu-",
+            "-fsanitize=kernel-address",
+            "main.cc",
+            "-L/usr/x86_64-cros-linux-gnu/usr/lib64",
+            "-mno-movbe",
+            "-B../../bin",
+            "-target",
+            "x86_64-cros-linux-gnu"
+          ],
+          "env_updates": [
+            "CCACHE_DIR=/var/cache/distfiles/ccache",
+            "CCACHE_UMASK=002",
+            "CCACHE_CPP2=yes"
+          ],
+          "path": "/usr/bin/ccache"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "-fsanitize=kernel-address",
+          "-D_FORTIFY_SOURCE=1",
+          "main.cc"
+        ],
+        "path": "./x86_64-cros-linux-gnu-clang"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "../../usr/bin/clang",
+            "--sysroot=/usr/x86_64-cros-linux-gnu",
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-section",
+            "-static-libgcc",
+            "--prefix=../../bin/x86_64-cros-linux-gnu-",
+            "-fsanitize=kernel-address",
+            "main.cc",
+            "-L/usr/x86_64-cros-linux-gnu/usr/lib64",
+            "-mno-movbe",
+            "-B../../bin",
+            "-target",
+            "x86_64-cros-linux-gnu"
+          ],
+          "env_updates": [
+            "CCACHE_DIR=/var/cache/distfiles/ccache",
+            "CCACHE_UMASK=002",
+            "CCACHE_CPP2=yes"
+          ],
+          "path": "/usr/bin/ccache"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "-fsanitize=kernel-address",
+          "-D_FORTIFY_SOURCE=2",
+          "main.cc"
+        ],
+        "path": "./x86_64-cros-linux-gnu-clang"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "../../usr/bin/clang",
+            "--sysroot=/usr/x86_64-cros-linux-gnu",
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-section",
+            "-static-libgcc",
+            "--prefix=../../bin/x86_64-cros-linux-gnu-",
+            "-fsanitize=fuzzer",
+            "main.cc",
+            "-L/usr/x86_64-cros-linux-gnu/usr/lib64",
+            "-mno-movbe",
+            "-B../../bin",
+            "-target",
+            "x86_64-cros-linux-gnu"
+          ],
+          "env_updates": [
+            "CCACHE_DIR=/var/cache/distfiles/ccache",
+            "CCACHE_UMASK=002",
+            "CCACHE_CPP2=yes"
+          ],
+          "path": "/usr/bin/ccache"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "-fsanitize=fuzzer",
+          "main.cc"
+        ],
+        "path": "./x86_64-cros-linux-gnu-clang"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "../../usr/bin/clang",
+            "--sysroot=/usr/x86_64-cros-linux-gnu",
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-section",
+            "-static-libgcc",
+            "--prefix=../../bin/x86_64-cros-linux-gnu-",
+            "-fsanitize=address",
+            "-fprofile-instr-generate",
+            "main.cc",
+            "-L/usr/x86_64-cros-linux-gnu/usr/lib64",
+            "-mno-movbe",
+            "-B../../bin",
+            "-target",
+            "x86_64-cros-linux-gnu"
+          ],
+          "env_updates": [
+            "CCACHE_DIR=/var/cache/distfiles/ccache",
+            "CCACHE_UMASK=002",
+            "CCACHE_CPP2=yes"
+          ],
+          "path": "/usr/bin/ccache"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "-fsanitize=address",
+          "-fprofile-instr-generate",
+          "main.cc"
+        ],
+        "path": "./x86_64-cros-linux-gnu-clang"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "../../usr/bin/clang",
+            "--sysroot=/usr/x86_64-cros-linux-gnu",
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-section",
+            "-static-libgcc",
+            "--prefix=../../bin/x86_64-cros-linux-gnu-",
+            "-fsanitize=address",
+            "main.cc",
+            "-L/usr/x86_64-cros-linux-gnu/usr/lib64",
+            "-mno-movbe",
+            "-B../../bin",
+            "-target",
+            "x86_64-cros-linux-gnu"
+          ],
+          "env_updates": [
+            "CCACHE_DIR=/var/cache/distfiles/ccache",
+            "CCACHE_UMASK=002",
+            "CCACHE_CPP2=yes"
+          ],
+          "path": "/usr/bin/ccache"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "-fsanitize=address",
+          "main.cc"
+        ],
+        "path": "./x86_64-cros-linux-gnu-clang"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "../../usr/bin/clang",
+            "--sysroot=/usr/x86_64-cros-linux-gnu",
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-section",
+            "-static-libgcc",
+            "--prefix=../../bin/x86_64-cros-linux-gnu-",
+            "-fprofile-instr-generate",
+            "main.cc",
+            "-L/usr/x86_64-cros-linux-gnu/usr/lib64",
+            "-mno-movbe",
+            "-B../../bin",
+            "-target",
+            "x86_64-cros-linux-gnu"
+          ],
+          "env_updates": [
+            "CCACHE_DIR=/var/cache/distfiles/ccache",
+            "CCACHE_UMASK=002",
+            "CCACHE_CPP2=yes"
+          ],
+          "path": "/usr/bin/ccache"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "-fprofile-instr-generate",
+          "main.cc"
+        ],
+        "path": "./x86_64-cros-linux-gnu-clang"
+      }
+    }
+  }
+]

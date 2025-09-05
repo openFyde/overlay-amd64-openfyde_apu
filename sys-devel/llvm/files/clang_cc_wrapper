@@ -1,0 +1,8 @@
+#! /bin/sh
+
+# Copyright 2022 The ChromiumOS Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Run host(SDK) clang with the passed arguments.
+exec "$(dirname "$(readlink -f "$0")")"/x86_64-pc-linux-gnu-clang "$@"

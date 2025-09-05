@@ -1,0 +1,431 @@
+[
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-unused-local-typedefs",
+            "-fcommon",
+            "main.cc"
+          ],
+          "path": "/tmp/stable/clang"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "main.cc"
+        ],
+        "path": "./x86_64-cros-linux-gnu-clang"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-unused-local-typedefs",
+            "-fcommon",
+            "main.cc"
+          ],
+          "path": "/tmp/stable/clang"
+        },
+        "exitcode": 1,
+        "stderr": "someerror",
+        "stdout": "somemessage"
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "main.cc"
+        ],
+        "path": "./x86_64-cros-linux-gnu-clang"
+      },
+      "exitcode": 1,
+      "stderr": "someerror",
+      "stdout": "somemessage"
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-unused-local-typedefs",
+            "-fcommon",
+            "main.cc"
+          ],
+          "path": "/tmp/stable/clang++"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "main.cc"
+        ],
+        "path": "./x86_64-cros-linux-gnu-clang++"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "--print-resource-dir"
+          ],
+          "path": "/tmp/stable/clang"
+        },
+        "stdout": "someResourceDir"
+      },
+      {
+        "cmd": {
+          "args": [
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-unused-local-typedefs",
+            "-fcommon",
+            "-resource-dir=someResourceDir",
+            "--gcc-toolchain=/usr",
+            "main.cc"
+          ],
+          "path": "/somedir/clang"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "-Xclang-path=/somedir",
+          "main.cc"
+        ],
+        "path": "./x86_64-cros-linux-gnu-clang"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "--print-resource-dir"
+          ],
+          "path": "/tmp/stable/clang"
+        },
+        "stdout": "someResourceDir"
+      },
+      {
+        "cmd": {
+          "args": [
+            "/somedir/clang",
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-unused-local-typedefs",
+            "-fcommon",
+            "-resource-dir=someResourceDir",
+            "--gcc-toolchain=/usr",
+            "main.cc"
+          ],
+          "path": "/tmp/stable/gomacc"
+        }
+      }
+    ],
+    "env": [
+      "GOMACC_PATH=/tmp/stable/gomacc"
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "-Xclang-path=/somedir",
+          "main.cc"
+        ],
+        "path": "./x86_64-cros-linux-gnu-clang"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "--print-resource-dir"
+          ],
+          "path": "/tmp/stable/clang"
+        },
+        "stdout": "someResourceDir"
+      },
+      {
+        "cmd": {
+          "args": [
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-unused-local-typedefs",
+            "-fcommon",
+            "-resource-dir=someResourceDir",
+            "--gcc-toolchain=/usr",
+            "main.cc"
+          ],
+          "path": "/somedir/clang"
+        },
+        "exitcode": 1,
+        "stderr": "someerror",
+        "stdout": "somemessage"
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "-Xclang-path=/somedir",
+          "main.cc"
+        ],
+        "path": "./x86_64-cros-linux-gnu-clang"
+      },
+      "exitcode": 1,
+      "stderr": "someerror",
+      "stdout": "somemessage"
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-unused-local-typedefs",
+            "-fcommon",
+            "main.cc"
+          ],
+          "path": "/tmp/stable/clang"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "main.cc"
+        ],
+        "path": "/tmp/stable/x86_64-cros-linux-gnu-clang"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-unused-local-typedefs",
+            "-fcommon",
+            "main.cc"
+          ],
+          "path": "/tmp/stable/a/b/c/d/e/f/g/clang"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "main.cc"
+        ],
+        "path": "./a/b/c/d/e/f/g/x86_64-cros-linux-gnu-clang"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-unused-local-typedefs",
+            "-fcommon",
+            "main.cc"
+          ],
+          "path": "/tmp/stable/a/b/c/d/e/f/g/clang"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "main.cc"
+        ],
+        "path": "./symlinked/x86_64-cros-linux-gnu-clang"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-unused-local-typedefs",
+            "-fcommon",
+            "main.cc"
+          ],
+          "path": "/tmp/stable/somedir/clang"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "main.cc"
+        ],
+        "path": "somedir/x86_64-cros-linux-gnu-clang"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-unused-local-typedefs",
+            "-fcommon",
+            "main.cc"
+          ],
+          "path": "/tmp/stable/pathenv/clang"
+        }
+      }
+    ],
+    "env": [
+      "PATH=/tmp/stable/pathenv"
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "main.cc"
+        ],
+        "path": "x86_64-cros-linux-gnu-clang"
+      }
+    }
+  }
+]

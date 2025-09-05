@@ -1,0 +1,70 @@
+diff --git a/meson.build b/meson.build
+index d5dbe95075c..f8f418d2ee0 100644
+--- a/meson.build
++++ b/meson.build
+@@ -895,7 +895,6 @@ if with_platform_android
+     dep_android = [
+       dependency('cutils'),
+       dependency('hardware'),
+-      dependency('log'),
+       dependency('sync'),
+     ]
+     if with_libbacktrace
+diff --git a/src/gallium/targets/dril/dril_target.c b/src/gallium/targets/dril/dril_target.c
+index 8b40e3627fb..70c663c3357 100644
+--- a/src/gallium/targets/dril/dril_target.c
++++ b/src/gallium/targets/dril/dril_target.c
+@@ -361,6 +361,7 @@ init_dri2_configs(int fd)
+    EGLBoolean (*peglGetConfigAttrib)(EGLDisplay, EGLConfig, EGLint, EGLint *) = peglGetProcAddress("eglGetConfigAttrib");
+    const char *(*peglQueryString)(EGLDisplay, EGLint) = peglGetProcAddress("eglQueryString");
+ 
++#if 0
+    struct gbm_device *gbm = NULL;
+    if (fd != -1) {
+       /* try opening GBM for hardware driver info */
+@@ -368,8 +369,9 @@ init_dri2_configs(int fd)
+       if (!gbm)
+          goto out;
+    }
++#endif
+ 
+-   EGLDisplay dpy = peglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_MESA, gbm ? gbm : EGL_DEFAULT_DISPLAY, NULL);
++   EGLDisplay dpy = peglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_MESA, /*gbm ? gbm :*/ EGL_DEFAULT_DISPLAY, NULL);
+    if (!dpy)
+       goto out_gbm;
+    int maj, min;
+@@ -436,8 +438,10 @@ out_egl:
+    peglTerminate(dpy);
+ 
+ out_gbm:
++#if 0
+    if (gbm)
+       gbm_device_destroy(gbm);
++#endif
+ out:
+    dlclose(egl);
+    if (c)
+@@ -537,6 +541,7 @@ const __DRIdri2Extension drilDRI2Extension = {
+ 
+     /* these are the methods used by the xserver */
+     .createNewScreen            = dril2CreateNewScreen,
++    .createNewScreen2           = drilCreateNewScreen,
+     .createNewDrawable          = drilCreateNewDrawable,
+     .createNewContext           = drilCreateNewContext,
+     .createContextAttribs       = drilCreateContextAttribs,
+diff --git a/src/meson.build b/src/meson.build
+index 61d7d1d40fa..c9d2554fd4c 100644
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -138,10 +138,8 @@ endif
+ if with_egl
+   subdir('egl')
+ endif
+-if with_gallium and with_gbm
+-  if with_glx == 'dri' or with_platform_x11 or with_platform_xcb
++if with_gallium
+     subdir('gallium/targets/dril')
+-  endif
+ endif
+ 
+ if with_gbm and with_dri2

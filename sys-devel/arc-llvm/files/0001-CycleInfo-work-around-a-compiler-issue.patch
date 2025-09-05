@@ -1,0 +1,32 @@
+From d1e05b79dfc5353468511337aeac9dff33478e5b Mon Sep 17 00:00:00 2001
+From: Chia-I Wu <olvaffe@gmail.com>
+Date: Tue, 28 Mar 2023 16:46:14 -0700
+Subject: [PATCH] CycleInfo: work around a compiler issue
+
+We are getting
+
+error: undefined reference to
+'llvm::GenericCycleInfo<llvm::GenericSSAContext<llvm::Function> >::GenericCycleInfo(llvm::GenericCycleInfo<llvm::GenericSSAContext<llvm::Function> >&&)'
+
+on android-container-pi.  Upon a closer look, CycleAnalysis.cpp does not
+provide the symbol and PassBuilder.cpp does not inline the call.  Add
+LLVM_ATTRIBUTE_ALWAYS_INLINE to work around the issue.
+---
+ include/llvm/ADT/GenericCycleInfo.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/llvm/ADT/GenericCycleInfo.h b/include/llvm/ADT/GenericCycleInfo.h
+index 5f851b795cbc..7bbcf5872c06 100644
+--- a/include/llvm/ADT/GenericCycleInfo.h
++++ b/include/llvm/ADT/GenericCycleInfo.h
+@@ -252,6 +252,7 @@ private:
+ 
+ public:
+   GenericCycleInfo() = default;
++  LLVM_ATTRIBUTE_ALWAYS_INLINE
+   GenericCycleInfo(GenericCycleInfo &&) = default;
+   GenericCycleInfo &operator=(GenericCycleInfo &&) = default;
+ 
+-- 
+2.40.0.348.gf938b09366-goog
+

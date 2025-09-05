@@ -1,0 +1,317 @@
+[
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-unused-local-typedefs",
+            "-fcommon",
+            "main.cc"
+          ],
+          "path": "/tmp/stable/clang"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "-ftrapv",
+          "main.cc"
+        ],
+        "path": "./x86_64-cros-linux-gnu-clang"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-unused-local-typedefs",
+            "-fcommon",
+            "main.cc"
+          ],
+          "path": "/tmp/stable/clang"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "-ftrapv",
+          "main.cc"
+        ],
+        "path": "./x86_64-cros-eabi-clang"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-unused-local-typedefs",
+            "-fcommon",
+            "main.cc"
+          ],
+          "path": "/tmp/stable/clang"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "-ftrapv",
+          "main.cc"
+        ],
+        "path": "./x86_64-cros-win-gnu-clang"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-unused-local-typedefs",
+            "-fcommon",
+            "main.cc"
+          ],
+          "path": "/tmp/stable/clang"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "-ftrapv",
+          "main.cc"
+        ],
+        "path": "./armv7m-cros-linux-gnu-clang"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-unused-local-typedefs",
+            "-fcommon",
+            "main.cc"
+          ],
+          "path": "/tmp/stable/clang"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "-ftrapv",
+          "main.cc"
+        ],
+        "path": "./armv7m-cros-eabi-clang"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-unused-local-typedefs",
+            "-fcommon",
+            "main.cc"
+          ],
+          "path": "/tmp/stable/clang"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "-ftrapv",
+          "main.cc"
+        ],
+        "path": "./armv7m-cros-win-gnu-clang"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-unused-local-typedefs",
+            "-fcommon",
+            "main.cc"
+          ],
+          "path": "/tmp/stable/clang"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "-ftrapv",
+          "main.cc"
+        ],
+        "path": "./armv8m-cros-linux-gnu-clang"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-unused-local-typedefs",
+            "-fcommon",
+            "main.cc"
+          ],
+          "path": "/tmp/stable/clang"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "-ftrapv",
+          "main.cc"
+        ],
+        "path": "./armv8m-cros-eabi-clang"
+      }
+    }
+  },
+  {
+    "cmds": [
+      {
+        "cmd": {
+          "args": [
+            "-Qunused-arguments",
+            "-Werror=poison-system-directories",
+            "-Wno-deprecated-declarations",
+            "-Wno-error=implicit-function-declaration",
+            "-Wno-error=implicit-int",
+            "-Wno-unknown-warning-option",
+            "-fdebug-default-version=5",
+            "-Wno-int-conversion",
+            "-Wno-incompatible-function-pointer-types",
+            "-Wno-error=vla-cxx-extension",
+            "-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES",
+            "-Wno-unused-local-typedefs",
+            "-fcommon",
+            "main.cc"
+          ],
+          "path": "/tmp/stable/clang"
+        }
+      }
+    ],
+    "wd": "/tmp/stable",
+    "wrapper": {
+      "cmd": {
+        "args": [
+          "-ftrapv",
+          "main.cc"
+        ],
+        "path": "./armv8m-cros-win-gnu-clang"
+      }
+    }
+  }
+]
