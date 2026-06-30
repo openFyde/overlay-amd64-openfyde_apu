@@ -1,0 +1,24 @@
+Index: mesa3d/src/gallium/auxiliary/pipe-loader/pipe_loader_drm.c
+===================================================================
+--- mesa3d.orig/src/gallium/auxiliary/pipe-loader/pipe_loader_drm.c
++++ mesa3d/src/gallium/auxiliary/pipe-loader/pipe_loader_drm.c
+@@ -167,10 +167,18 @@ pipe_loader_drm_probe_fd_nodup(struct pipe_loader_device **dev, int fd, bool zin
+    /* For the closed source AMD OpenGL driver, we want libgbm to load
+     * "amdgpu_dri.so", but we want Gallium multimedia drivers to load
+     * "radeonsi". So change amdgpu to radeonsi for Gallium.
++    *
++    * FydeOS/fydroid: this board builds Mesa with -Dllvm=disabled, so radeonsi
++    * (which needs LLVM) is NOT built -- the only AMD gallium driver is zink
++    * (GL-on-Vulkan via radv). Map amdgpu -> zink so every process (gralloc,
++    * SurfaceFlinger EGL, HWUI) selects zink without depending on a
++    * MESA_LOADER_DRIVER_OVERRIDE env var / mesa.loader.driver.override property
++    * being present (the property is easy to lose and the prefixed forms exceed
++    * the 32-byte property-key limit).
+     */
+    if (strcmp(ddev->base.driver_name, "amdgpu") == 0) {
+       FREE(ddev->base.driver_name);
+-      ddev->base.driver_name = strdup("radeonsi");
++      ddev->base.driver_name = strdup("zink");
+    }
+ 
+    if (strcmp(ddev->base.driver_name, "virtio_gpu") == 0) {

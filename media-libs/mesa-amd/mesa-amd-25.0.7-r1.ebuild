@@ -3,11 +3,11 @@
 
 EAPI=7
 
-CROS_WORKON_COMMIT="8a3d5aed64444c04ffdb39aec8fa301e12d0e049"
+CROS_WORKON_COMMIT="742a20f48c59e8649533c84c4d49dd95b403f5da"
 CROS_WORKON_TREE="4410d8c151d9b163f8929bf66d675ff72415e807"
 CROS_WORKON_PROJECT="chromiumos/third_party/mesa"
 CROS_WORKON_LOCALNAME="mesa-amd"
-CROS_WORKON_EGIT_BRANCH="upstream/25.1"
+CROS_WORKON_EGIT_BRANCH="upstream/25.0.7"
 
 inherit flag-o-matic meson cros-workon
 
@@ -16,7 +16,7 @@ HOMEPAGE="http://mesa3d.org/"
 
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="~*"
+KEYWORDS="*"
 
 IUSE="debug libglvnd vulkan +zstd"
 
@@ -35,7 +35,7 @@ RDEPEND="
 
 DEPEND="${RDEPEND}
 	x11-libs/libva
-	sys-devel/llvm:18
+	sys-devel/llvm:15
 "
 
 BDEPEND="
@@ -61,7 +61,7 @@ src_configure() {
 		-Dgles1=disabled
 		-Dgles2=enabled
 		$(meson_feature zstd)
-		-Dgallium-drivers=radeonsi
+		-Dgallium-drivers=zink,radeonsi
 		-Dvulkan-drivers=$(usex vulkan amd '')
 		--buildtype $(usex debug debug release)
 		-Dgallium-va=enabled
@@ -74,8 +74,8 @@ src_configure() {
 
 src_install() {
 	meson_src_install
-  dosym libgallium-${PV}.so /usr/$(get_libdir)/libgallium_dri.so
-  dosym ../libgallium-${PV}.so /usr/$(get_libdir)/dri/radeonsi_dri.so
+#  dosym libgallium-${PV}.so /usr/$(get_libdir)/libgallium_dri.so
+#  dosym ../libgallium-${PV}.so /usr/$(get_libdir)/dri/radeonsi_dri.so
 
 	# Keep the dri header for minigbm
 	rm -v -rf "${ED}"/usr/include/GL/*.h
@@ -86,4 +86,4 @@ src_install() {
 	doins "${FILESDIR}"/drirc
 }
 
-PATCHES=( ${FILESDIR}/001-add-dril.patch )
+PATCHES=( ${FILESDIR}/014-amdgpu-use-zink-when-radeonsi-not-built.patch )

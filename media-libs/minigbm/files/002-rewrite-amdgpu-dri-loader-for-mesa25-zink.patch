@@ -1,0 +1,620 @@
+Index: minigbm/amdgpu.c
+===================================================================
+--- minigbm.orig/amdgpu.c
++++ minigbm/amdgpu.c
+@@ -24,9 +24,15 @@
+ #include "drv_priv.h"
+ #include "util.h"
+ 
+-// clang-format off
+-#define DRI_PATH STRINGIZE(DRI_DRIVER_DIR/radeonsi_dri.so)
+-// clang-format on
++/*
++ * The Mesa >= 25 gallium megadriver. Loaded by soname so the dynamic linker
++ * resolves the correct ABI from the vendor library path (/vendor/lib64 for a
++ * 64-bit process, /vendor/lib for 32-bit) instead of a hard-coded, arch-wrong
++ * absolute path. The legacy DRI_DRIVER_DIR/radeonsi_dri.so name no longer
++ * exists: Mesa ships a single libgallium_dri.so and the GL driver is selected
++ * by screen type (zink => KOPPER) in dri_init().
++ */
++#define DRI_PATH "libgallium_dri.so"
+ 
+ #define TILE_TYPE_LINEAR 0
+ /* We decide a modifier and then use DRI to manage allocation */
+Index: minigbm/dri.c
+===================================================================
+--- minigbm.orig/dri.c
++++ minigbm/dri.c
+@@ -11,7 +11,9 @@
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <stdbool.h>
++#include <stdint.h>
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <string.h>
+ #include <sys/mman.h>
+ #include <unistd.h>
+@@ -22,22 +24,104 @@
+ #include "drv_priv.h"
+ #include "util.h"
+ 
+-// Avoid transitively including a bunch of unnecessary headers.
+-#define GL_GLEXT_LEGACY
+-#include "GL/internal/dri_interface.h"
+-#undef GL_GLEXT_LEGACY
++/*
++ * Mesa >= 25 reworked the DRI driver interface. The per-driver
++ * __driDriverGetExtensions_<name> entry point and the extension-struct based
++ * screen/image API used by older Mesa are gone from the gallium megadriver
++ * (libgallium_dri.so); the driver is now driven through directly-exported
++ * functions (driCreateNewScreen3(), dri2_*()/dri_*()), exactly as Mesa's own
++ * GBM backend (src/gbm/backends/dri/gbm_dri.c) does. minigbm dlopen()s the
++ * megadriver at runtime (it does not link against it), so each entry point is
++ * resolved with dlsym() into the function pointers held in struct dri_driver.
++ *
++ * The GL driver is selected by the screen *type*, not by name: a KOPPER screen
++ * is zink (GL-on-Vulkan), while a DRI3 screen auto-selects the hardware gallium
++ * driver from the DRM fd (radeonsi for amdgpu). This board uses zink, so the
++ * amdgpu backend asks for a KOPPER screen (see amdgpu.c).
++ */
++#include <GL/gl.h>
++#include "mesa_interface.h"
++#include "kopper_interface.h"
++
++/* Defined in Mesa's src/gallium/frontends/dri/dri_util.h, which is not a
++ * stable/public header; mirror the value here. Must match Mesa exactly. */
++enum dri_screen_type {
++	DRI_SCREEN_DRI3,
++	DRI_SCREEN_KOPPER,
++	DRI_SCREEN_SWRAST,
++	DRI_SCREEN_KMS_SWRAST,
++};
++
++struct dri_drawable;
++
++/* Megadriver entry points, resolved with dlsym(). Signatures must match
++ * src/gallium/frontends/dri/dri_util.h in the Mesa being linked against. */
++typedef struct dri_screen *(*pfn_create_screen)(int scrn, int fd,
++						 const __DRIextension **loader_extensions,
++						 enum dri_screen_type type,
++						 const struct dri_config ***driver_configs,
++						 bool driver_name_is_inferred,
++						 bool has_multibuffer, void *data);
++typedef struct dri_context *(*pfn_create_context)(struct dri_screen *screen,
++						   const struct dri_config *config,
++						   struct dri_context *shared, void *data,
++						   bool thread_safe);
++typedef void (*pfn_destroy_screen)(struct dri_screen *screen);
++typedef void (*pfn_destroy_context)(struct dri_context *ctx);
++typedef struct dri_image *(*pfn_create_image)(struct dri_screen *screen, int width, int height,
++					      int format, const uint64_t *modifiers,
++					      const unsigned count, unsigned int use,
++					      void *loaderPrivate);
++typedef struct dri_image *(*pfn_create_image_with_modifiers)(
++    struct dri_screen *screen, uint32_t width, uint32_t height, uint32_t dri_format,
++    uint32_t dri_usage, const uint64_t *modifiers, unsigned int modifiers_count,
++    void *loaderPrivate);
++typedef struct dri_image *(*pfn_from_dma_bufs)(
++    struct dri_screen *screen, int width, int height, int fourcc, uint64_t modifier, int *fds,
++    int num_fds, int *strides, int *offsets, enum __DRIYUVColorSpace yuv_color_space,
++    enum __DRISampleRange sample_range, enum __DRIChromaSiting horizontal_siting,
++    enum __DRIChromaSiting vertical_siting, uint32_t dri_flags, unsigned *error,
++    void *loaderPrivate);
++typedef struct dri_image *(*pfn_from_planar)(struct dri_image *image, int plane,
++					     void *loaderPrivate);
++typedef GLboolean (*pfn_query_image)(struct dri_image *image, int attrib, int *value);
++typedef void (*pfn_destroy_image)(struct dri_image *image);
++typedef void *(*pfn_map_image)(struct dri_context *ctx, struct dri_image *image, int x0, int y0,
++			       int width, int height, unsigned int flags, int *stride,
++			       void **data);
++typedef void (*pfn_unmap_image)(struct dri_context *ctx, struct dri_image *image, void *data);
++typedef void (*pfn_flush)(struct dri_context *ctx, struct dri_drawable *draw, unsigned flags,
++			  enum __DRI2throttleReason reason);
++typedef bool (*pfn_query_dma_buf_modifiers)(struct dri_screen *screen, int fourcc, int max,
++					    uint64_t *modifiers, unsigned int *external_only,
++					    int *count);
++typedef bool (*pfn_query_dma_buf_format_modifier_attribs)(struct dri_screen *screen,
++							  uint32_t fourcc, uint64_t modifier,
++							  int attrib, uint64_t *value);
+ 
+ struct dri_driver {
+ 	int fd;
+ 	void *driver_handle;
+-	__DRIscreen *device;
+-	__DRIcontext *context; /* Needed for map/unmap operations. */
+-	const __DRIextension **extensions;
+-	const __DRIcoreExtension *core_extension;
+-	const __DRIdri2Extension *dri2_extension;
+-	const __DRIimageExtension *image_extension;
+-	const __DRI2flushExtension *flush_extension;
+-	const __DRIconfig **configs;
++	struct dri_screen *device;
++	struct dri_context *context; /* Needed for map/unmap operations. */
++	const struct dri_config **configs;
++
++	/* Entry points resolved from the megadriver. */
++	pfn_create_screen create_screen;
++	pfn_create_context create_context;
++	pfn_destroy_screen destroy_screen;
++	pfn_destroy_context destroy_context;
++	pfn_create_image create_image;
++	pfn_create_image_with_modifiers create_image_with_modifiers;
++	pfn_from_dma_bufs from_dma_bufs;
++	pfn_from_planar from_planar;
++	pfn_query_image query_image;
++	pfn_destroy_image destroy_image;
++	pfn_map_image map_image;
++	pfn_unmap_image unmap_image;
++	pfn_flush flush;
++	pfn_query_dma_buf_modifiers query_dma_buf_modifiers;
++	pfn_query_dma_buf_format_modifier_attribs query_dma_buf_format_modifier_attribs;
+ };
+ 
+ static const struct {
+@@ -69,20 +153,19 @@ static int drm_format_to_dri_format(uint
+ 	return 0;
+ }
+ 
+-static bool lookup_extension(const __DRIextension *const *extensions, const char *name,
+-			     int min_version, const __DRIextension **dst)
++static unsigned int use_flags_to_dri_use(uint64_t use_flags)
+ {
+-	while (*extensions) {
+-		if ((*extensions)->name && !strcmp((*extensions)->name, name) &&
+-		    (*extensions)->version >= min_version) {
+-			*dst = *extensions;
+-			return true;
+-		}
++	/* Gallium drivers require shared to get the handle and stride. */
++	unsigned int dri_use = __DRI_IMAGE_USE_SHARE;
+ 
+-		extensions++;
+-	}
++	if (use_flags & BO_USE_SCANOUT)
++		dri_use |= __DRI_IMAGE_USE_SCANOUT;
++	if (use_flags & BO_USE_CURSOR)
++		dri_use |= __DRI_IMAGE_USE_CURSOR;
++	if (use_flags & BO_USE_LINEAR)
++		dri_use |= __DRI_IMAGE_USE_LINEAR;
+ 
+-	return false;
++	return dri_use;
+ }
+ 
+ /*
+@@ -94,23 +177,21 @@ static int import_into_minigbm(struct dr
+ 	uint32_t handle = 0;
+ 	int ret, modifier_upper, modifier_lower, num_planes, prime_fd;
+ 	off_t dmabuf_size;
+-	__DRIimage *plane_image = NULL;
++	struct dri_image *plane_image = NULL;
+ 
+-	if (dri->image_extension->queryImage(bo->priv, __DRI_IMAGE_ATTRIB_MODIFIER_UPPER,
+-					     &modifier_upper) &&
+-	    dri->image_extension->queryImage(bo->priv, __DRI_IMAGE_ATTRIB_MODIFIER_LOWER,
+-					     &modifier_lower))
++	if (dri->query_image(bo->priv, __DRI_IMAGE_ATTRIB_MODIFIER_UPPER, &modifier_upper) &&
++	    dri->query_image(bo->priv, __DRI_IMAGE_ATTRIB_MODIFIER_LOWER, &modifier_lower))
+ 		bo->meta.format_modifier =
+ 		    ((uint64_t)modifier_upper << 32) | (uint32_t)modifier_lower;
+ 	else
+ 		bo->meta.format_modifier = DRM_FORMAT_MOD_INVALID;
+ 
+-	if (!dri->image_extension->queryImage(bo->priv, __DRI_IMAGE_ATTRIB_NUM_PLANES, &num_planes))
++	if (!dri->query_image(bo->priv, __DRI_IMAGE_ATTRIB_NUM_PLANES, &num_planes))
+ 		return -errno;
+ 
+ 	bo->meta.num_planes = num_planes;
+ 
+-	if (!dri->image_extension->queryImage(bo->priv, __DRI_IMAGE_ATTRIB_FD, &prime_fd))
++	if (!dri->query_image(bo->priv, __DRI_IMAGE_ATTRIB_FD, &prime_fd))
+ 		return -errno;
+ 
+ 	dmabuf_size = lseek(prime_fd, 0, SEEK_END);
+@@ -133,11 +214,11 @@ static int import_into_minigbm(struct dr
+ 	bo->handle.u32 = handle;
+ 	for (int i = 0; i < num_planes; ++i) {
+ 		int stride, offset;
+-		plane_image = dri->image_extension->fromPlanar(bo->priv, i, NULL);
+-		__DRIimage *image = plane_image ? plane_image : bo->priv;
++		plane_image = dri->from_planar(bo->priv, i, NULL);
++		struct dri_image *image = plane_image ? plane_image : bo->priv;
+ 
+-		if (!dri->image_extension->queryImage(image, __DRI_IMAGE_ATTRIB_STRIDE, &stride) ||
+-		    !dri->image_extension->queryImage(image, __DRI_IMAGE_ATTRIB_OFFSET, &offset)) {
++		if (!dri->query_image(image, __DRI_IMAGE_ATTRIB_STRIDE, &stride) ||
++		    !dri->query_image(image, __DRI_IMAGE_ATTRIB_OFFSET, &offset)) {
+ 			ret = -errno;
+ 			goto cleanup;
+ 		}
+@@ -146,7 +227,7 @@ static int import_into_minigbm(struct dr
+ 		bo->meta.offsets[i] = offset;
+ 
+ 		if (plane_image)
+-			dri->image_extension->destroyImage(plane_image);
++			dri->destroy_image(plane_image);
+ 
+ 		if (i > 0)
+ 			bo->meta.sizes[i - 1] = bo->meta.offsets[i] - bo->meta.offsets[i - 1];
+@@ -159,7 +240,7 @@ static int import_into_minigbm(struct dr
+ 
+ cleanup:
+ 	if (plane_image)
+-		dri->image_extension->destroyImage(plane_image);
++		dri->destroy_image(plane_image);
+ 
+ 	if (handle != 0)
+ 		drv_gem_close(bo->drv, handle);
+@@ -167,8 +248,22 @@ cleanup:
+ 	return ret;
+ }
+ 
+-const __DRIuseInvalidateExtension use_invalidate = {
+-	.base = { __DRI_USE_INVALIDATE, 1 },
++/*
++ * Mesa >= 26 dropped __DRIuseInvalidateExtension from the driver interface
++ * (it is no longer in mesa_interface.h and the megadriver ignores it), so it
++ * is not advertised. All loader extensions consumed by driCreateNewScreen3()
++ * are optional (see setupLoaderExtensions() in Mesa's dri_util.c); the kopper
++ * loader is only used by zink (KOPPER screen). This board uses radeonsi via a
++ * DRI3 screen, but advertising it is harmless.
++ */
++static const __DRIkopperLoaderExtension kopper_loader = {
++	.base = { __DRI_KOPPER_LOADER, 1 },
++	.SetSurfaceCreateInfo = NULL,
++};
++
++static const __DRIextension *loader_extensions[] = {
++	&kopper_loader.base,
++	NULL,
+ };
+ 
+ void *dri_dlopen(const char *dri_so_path)
+@@ -183,9 +278,19 @@ void dri_dlclose(void *dri_so_handle)
+ 
+ struct dri_driver *dri_init(struct driver *drv, const char *dri_so_path, const char *driver_suffix)
+ {
+-	char fname[128];
+-	const __DRIextension **(*get_extensions)();
+-	const __DRIextension *loader_extensions[] = { &use_invalidate.base, NULL };
++	/*
++	 * Force the requested gallium driver (e.g. "zink" for amdgpu, since
++	 * radeonsi needs LLVM and is not built) and create a plain DRI3 gallium
++	 * screen. We do NOT use DRI_SCREEN_KOPPER: on Android Mesa stubs out the
++	 * kopper (Vulkan-WSI) screen path -- src/gallium/frontends/dri/meson.build
++	 * gates kopper.c on "not with_platform_android", so kopper_init_screen()
++	 * always returns NULL. Instead, driCreateNewScreen3(DRI_SCREEN_DRI3) goes
++	 * through dri2_init_screen() -> pipe_loader, and loader_get_driver_for_fd()
++	 * honors MESA_LOADER_DRIVER_OVERRIDE, yielding a zink pipe screen without
++	 * any windowing/kopper code. setenv(,,0) leaves a pre-existing board or
++	 * environment override intact. */
++	setenv("MESA_LOADER_DRIVER_OVERRIDE", driver_suffix, 0);
++	enum dri_screen_type screen_type = DRI_SCREEN_DRI3;
+ 
+ 	struct dri_driver *dri = calloc(1, sizeof(*dri));
+ 	if (!dri)
+@@ -201,52 +306,59 @@ struct dri_driver *dri_init(struct drive
+ 		goto free_dri;
+ 
+ 	dri->driver_handle = dri_dlopen(dri_so_path);
+-	if (!dri->driver_handle)
++	if (!dri->driver_handle) {
++		drv_loge("dri_init: dlopen(%s) failed: %s\n", dri_so_path, dlerror());
+ 		goto close_dri_fd;
++	}
+ 
+-	snprintf(fname, sizeof(fname), __DRI_DRIVER_GET_EXTENSIONS "_%s", driver_suffix);
+-	get_extensions = dlsym(dri->driver_handle, fname);
+-	if (!get_extensions)
+-		goto free_handle;
+-
+-	dri->extensions = get_extensions();
+-	if (!dri->extensions)
+-		goto free_handle;
+-
+-	if (!lookup_extension(dri->extensions, __DRI_CORE, 2,
+-			      (const __DRIextension **)&dri->core_extension))
+-		goto free_handle;
+-
+-	/* Version 4 for createNewScreen2 */
+-	if (!lookup_extension(dri->extensions, __DRI_DRI2, 4,
+-			      (const __DRIextension **)&dri->dri2_extension))
+-		goto free_handle;
+-
+-	dri->device = dri->dri2_extension->createNewScreen2(0, dri->fd, loader_extensions,
+-							    dri->extensions, &dri->configs, NULL);
+-	if (!dri->device)
++#define DRI_RESOLVE(field, sym)                                                                    \
++	do {                                                                                       \
++		dri->field = (__typeof__(dri->field))dlsym(dri->driver_handle, #sym);              \
++		if (!dri->field) {                                                                 \
++			drv_loge("dri_init: dlsym(%s) failed\n", #sym);                            \
++			goto free_handle;                                                          \
++		}                                                                                  \
++	} while (0)
++
++	DRI_RESOLVE(create_screen, driCreateNewScreen3);
++	DRI_RESOLVE(create_context, driCreateNewContext);
++	DRI_RESOLVE(destroy_screen, driDestroyScreen);
++	DRI_RESOLVE(destroy_context, driDestroyContext);
++	DRI_RESOLVE(create_image, dri_create_image);
++	DRI_RESOLVE(create_image_with_modifiers, dri_create_image_with_modifiers);
++	DRI_RESOLVE(from_dma_bufs, dri2_from_dma_bufs);
++	DRI_RESOLVE(from_planar, dri2_from_planar);
++	DRI_RESOLVE(query_image, dri2_query_image);
++	DRI_RESOLVE(destroy_image, dri2_destroy_image);
++	DRI_RESOLVE(map_image, dri2_map_image);
++	DRI_RESOLVE(unmap_image, dri2_unmap_image);
++	DRI_RESOLVE(flush, dri_flush);
++	DRI_RESOLVE(query_dma_buf_modifiers, dri_query_dma_buf_modifiers);
++	DRI_RESOLVE(query_dma_buf_format_modifier_attribs, dri2_query_dma_buf_format_modifier_attribs);
++#undef DRI_RESOLVE
++
++	dri->device = dri->create_screen(0, dri->fd, loader_extensions, screen_type, &dri->configs,
++					 false, true, NULL);
++	if (!dri->device) {
++		drv_loge("dri_init: driCreateNewScreen3 failed (driver=%s fd=%d)\n", driver_suffix,
++			 dri->fd);
+ 		goto free_handle;
++	}
+ 
+-	dri->context =
+-	    dri->dri2_extension->createNewContext(dri->device, *dri->configs, NULL, NULL);
+-
+-	if (!dri->context)
++	/* thread_safe=false: minigbm only uses this context for buffer
++	 * map/unmap under its own per-driver mutex and issues no GL rendering,
++	 * so glthread (the only thing this flag gates in Mesa >= 26) is not
++	 * needed. */
++	dri->context = dri->create_context(dri->device, dri->configs[0], NULL, NULL, false);
++	if (!dri->context) {
++		drv_loge("dri_init: driCreateNewContext failed\n");
+ 		goto free_screen;
+-
+-	if (!lookup_extension(dri->core_extension->getExtensions(dri->device), __DRI_IMAGE, 12,
+-			      (const __DRIextension **)&dri->image_extension))
+-		goto free_context;
+-
+-	if (!lookup_extension(dri->core_extension->getExtensions(dri->device), __DRI2_FLUSH, 4,
+-			      (const __DRIextension **)&dri->flush_extension))
+-		goto free_context;
++	}
+ 
+ 	return dri;
+ 
+-free_context:
+-	dri->core_extension->destroyContext(dri->context);
+ free_screen:
+-	dri->core_extension->destroyScreen(dri->device);
++	dri->destroy_screen(dri->device);
+ free_handle:
+ 	dri_dlclose(dri->driver_handle);
+ 	dri->driver_handle = NULL;
+@@ -259,8 +371,8 @@ free_dri:
+ 
+ void dri_close(struct dri_driver *dri)
+ {
+-	dri->core_extension->destroyContext(dri->context);
+-	dri->core_extension->destroyScreen(dri->device);
++	dri->destroy_context(dri->context);
++	dri->destroy_screen(dri->device);
+ 	dri_dlclose(dri->driver_handle);
+ 	dri->driver_handle = NULL;
+ 	close(dri->fd);
+@@ -274,31 +386,28 @@ int dri_bo_create(struct dri_driver *dri
+ 	int ret, dri_format;
+ 
+ 	dri_format = drm_format_to_dri_format(format);
++	dri_use = use_flags_to_dri_use(use_flags);
+ 
+-	/* Gallium drivers require shared to get the handle and stride. */
+-	dri_use = __DRI_IMAGE_USE_SHARE;
+-	if (use_flags & BO_USE_SCANOUT)
+-		dri_use |= __DRI_IMAGE_USE_SCANOUT;
+-	if (use_flags & BO_USE_CURSOR)
+-		dri_use |= __DRI_IMAGE_USE_CURSOR;
+-	if (use_flags & BO_USE_LINEAR)
+-		dri_use |= __DRI_IMAGE_USE_LINEAR;
+-
+-	bo->priv = dri->image_extension->createImage(dri->device, width, height, dri_format,
+-						     dri_use, NULL);
++	bo->priv = dri->create_image(dri->device, width, height, dri_format, NULL, 0, dri_use,
++				     NULL);
+ 	if (!bo->priv) {
+ 		ret = -errno;
++		drv_loge("dri_create_image(w=%u h=%u drm_fmt=0x%x dri_fmt=%d use=0x%x) failed: %s\n",
++			 width, height, format, dri_format, dri_use, strerror(errno));
+ 		return ret;
+ 	}
+ 
+ 	ret = import_into_minigbm(dri, bo);
+-	if (ret)
++	if (ret) {
++		drv_loge("import_into_minigbm after dri_create_image (drm_fmt=0x%x) failed: %d\n",
++			 format, ret);
+ 		goto free_image;
++	}
+ 
+ 	return 0;
+ 
+ free_image:
+-	dri->image_extension->destroyImage(bo->priv);
++	dri->destroy_image(bo->priv);
+ 	return ret;
+ }
+ 
+@@ -307,27 +416,34 @@ int dri_bo_create_with_modifiers(struct
+ 				 const uint64_t *modifiers, uint32_t modifier_count)
+ {
+ 	int ret, dri_format;
++	unsigned int dri_use;
+ 
+-	if (!dri->image_extension->createImageWithModifiers)
++	if (!dri->create_image_with_modifiers)
+ 		return -ENOENT;
+ 
+ 	dri_format = drm_format_to_dri_format(format);
++	dri_use = use_flags_to_dri_use(use_flags);
+ 
+-	bo->priv = dri->image_extension->createImageWithModifiers(
+-	    dri->device, width, height, dri_format, modifiers, modifier_count, NULL);
++	bo->priv = dri->create_image_with_modifiers(dri->device, width, height, dri_format, dri_use,
++						    modifiers, modifier_count, NULL);
+ 	if (!bo->priv) {
+ 		ret = -errno;
++		drv_loge("dri_create_image_with_modifiers(w=%u h=%u drm_fmt=0x%x dri_fmt=%d use=0x%x mod_count=%u) failed: %s\n",
++			 width, height, format, dri_format, dri_use, modifier_count, strerror(errno));
+ 		return ret;
+ 	}
+ 
+ 	ret = import_into_minigbm(dri, bo);
+-	if (ret)
++	if (ret) {
++		drv_loge("import_into_minigbm after dri_create_image_with_modifiers (drm_fmt=0x%x) failed: %d\n",
++			 format, ret);
+ 		goto free_image;
++	}
+ 
+ 	return 0;
+ 
+ free_image:
+-	dri->image_extension->destroyImage(bo->priv);
++	dri->destroy_image(bo->priv);
+ 	return ret;
+ }
+ 
+@@ -338,22 +454,20 @@ int dri_bo_import(struct dri_driver *dri
+ 	if (data->format_modifier != DRM_FORMAT_MOD_INVALID) {
+ 		unsigned error;
+ 
+-		if (!dri->image_extension->createImageFromDmaBufs2)
+-			return -ENOSYS;
+-
+ 		// clang-format off
+-		bo->priv = dri->image_extension->createImageFromDmaBufs2(dri->device, data->width, data->height,
+-									 drv_get_standard_fourcc(data->format),
+-									 data->format_modifier,
+-									 data->fds,
+-									 bo->meta.num_planes,
+-									 (int *)data->strides,
+-									 (int *)data->offsets,
+-									 __DRI_YUV_COLOR_SPACE_UNDEFINED,
+-									 __DRI_YUV_RANGE_UNDEFINED,
+-									 __DRI_YUV_CHROMA_SITING_UNDEFINED,
+-									 __DRI_YUV_CHROMA_SITING_UNDEFINED,
+-									 &error, NULL);
++		bo->priv = dri->from_dma_bufs(dri->device, data->width, data->height,
++					      drv_get_standard_fourcc(data->format),
++					      data->format_modifier,
++					      data->fds,
++					      bo->meta.num_planes,
++					      (int *)data->strides,
++					      (int *)data->offsets,
++					      __DRI_YUV_COLOR_SPACE_UNDEFINED,
++					      __DRI_YUV_RANGE_UNDEFINED,
++					      __DRI_YUV_CHROMA_SITING_UNDEFINED,
++					      __DRI_YUV_CHROMA_SITING_UNDEFINED,
++					      0,
++					      &error, NULL);
+ 		// clang-format on
+ 
+ 		/* Could translate the DRI error, but the Mesa GBM also returns ENOSYS. */
+@@ -361,11 +475,19 @@ int dri_bo_import(struct dri_driver *dri
+ 			return -ENOSYS;
+ 	} else {
+ 		// clang-format off
+-		bo->priv = dri->image_extension->createImageFromFds(dri->device, data->width, data->height,
+-								    drv_get_standard_fourcc(data->format), data->fds,
+-								    bo->meta.num_planes,
+-								    (int *)data->strides,
+-								    (int *)data->offsets, NULL);
++		bo->priv = dri->from_dma_bufs(dri->device, data->width, data->height,
++					      drv_get_standard_fourcc(data->format),
++					      DRM_FORMAT_MOD_INVALID,
++					      data->fds,
++					      bo->meta.num_planes,
++					      (int *)data->strides,
++					      (int *)data->offsets,
++					      __DRI_YUV_COLOR_SPACE_UNDEFINED,
++					      __DRI_YUV_RANGE_UNDEFINED,
++					      __DRI_YUV_CHROMA_SITING_UNDEFINED,
++					      __DRI_YUV_CHROMA_SITING_UNDEFINED,
++					      0,
++					      NULL, NULL);
+ 		// clang-format on
+ 		if (!bo->priv)
+ 			return -errno;
+@@ -373,7 +495,7 @@ int dri_bo_import(struct dri_driver *dri
+ 
+ 	ret = import_into_minigbm(dri, bo);
+ 	if (ret) {
+-		dri->image_extension->destroyImage(bo->priv);
++		dri->destroy_image(bo->priv);
+ 		return ret;
+ 	}
+ 
+@@ -383,7 +505,7 @@ int dri_bo_import(struct dri_driver *dri
+ int dri_bo_release(struct dri_driver *dri, struct bo *bo)
+ {
+ 	assert(bo->priv);
+-	dri->image_extension->destroyImage(bo->priv);
++	dri->destroy_image(bo->priv);
+ 	/* Not clearing bo->priv as we still use it to determine which destroy to call. */
+ 	return 0;
+ }
+@@ -409,9 +531,8 @@ void *dri_bo_map(struct dri_driver *dri,
+ 		 uint32_t map_flags)
+ {
+ 	/* GBM flags and DRI flags are the same. */
+-	vma->addr = dri->image_extension->mapImage(dri->context, bo->priv, 0, 0, bo->meta.width,
+-						   bo->meta.height, map_flags,
+-						   (int *)&vma->map_strides[plane], &vma->priv);
++	vma->addr = dri->map_image(dri->context, bo->priv, 0, 0, bo->meta.width, bo->meta.height,
++				   map_flags, (int *)&vma->map_strides[plane], &vma->priv);
+ 	if (!vma->addr)
+ 		return MAP_FAILED;
+ 
+@@ -421,7 +542,7 @@ void *dri_bo_map(struct dri_driver *dri,
+ int dri_bo_unmap(struct dri_driver *dri, struct bo *bo, struct vma *vma)
+ {
+ 	assert(vma->priv);
+-	dri->image_extension->unmapImage(dri->context, bo->priv, vma->priv);
++	dri->unmap_image(dri->context, bo->priv, vma->priv);
+ 
+ 	/*
+ 	 * From gbm_dri.c in Mesa:
+@@ -431,7 +552,7 @@ int dri_bo_unmap(struct dri_driver *dri,
+ 	 *  we need to flush here."
+ 	 */
+ 
+-	dri->flush_extension->flush_with_flags(dri->context, NULL, __DRI2_FLUSH_CONTEXT, 0);
++	dri->flush(dri->context, NULL, __DRI2_FLUSH_CONTEXT, (enum __DRI2throttleReason)0);
+ 	return 0;
+ }
+ 
+@@ -442,8 +563,8 @@ size_t dri_num_planes_from_modifier(stru
+ 	/* We do not do any modifier checks here. The create will fail later if the modifier is not
+ 	 * supported.
+ 	 */
+-	if (dri->image_extension->queryDmaBufFormatModifierAttribs &&
+-	    dri->image_extension->queryDmaBufFormatModifierAttribs(
++	if (dri->query_dma_buf_format_modifier_attribs &&
++	    dri->query_dma_buf_format_modifier_attribs(
+ 		dri->device, format, modifier, __DRI_IMAGE_FORMAT_MODIFIER_ATTRIB_PLANE_COUNT,
+ 		&planes))
+ 		return planes;
+@@ -454,11 +575,10 @@ size_t dri_num_planes_from_modifier(stru
+ bool dri_query_modifiers(struct dri_driver *dri, uint32_t format, int max, uint64_t *modifiers,
+ 			 int *count)
+ {
+-	if (!dri->image_extension->queryDmaBufModifiers)
++	if (!dri->query_dma_buf_modifiers)
+ 		return false;
+ 
+-	return dri->image_extension->queryDmaBufModifiers(dri->device, format, max, modifiers, NULL,
+-							  count);
++	return dri->query_dma_buf_modifiers(dri->device, format, max, modifiers, NULL, count);
+ }
+ 
+ #endif
