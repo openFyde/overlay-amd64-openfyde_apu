@@ -66,7 +66,7 @@ src_configure() {
 		--buildtype $(usex debug debug release)
 		-Dgallium-va=enabled
 		-Dva-libs-path="/usr/$(get_libdir)/va/drivers"
-		-Dvideo-codecs="h264dec,h264enc,h265dec,h265enc,vc1dec"
+		-Dvideo-codecs="h264dec,h264enc,h265dec,h265enc,vc1dec,vp9dec,av1dec,av1enc,mpeg12dec,jpegdec"
 	)
 
 	meson_src_configure
