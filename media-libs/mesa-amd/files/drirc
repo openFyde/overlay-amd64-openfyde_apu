@@ -1,9 +1,0 @@
-<driconf>
-   <device driver="radeonsi">
-      <application name="Default">
-         <!-- Disabled protected content check for secure playback -->
-         <option name="disable_protected_content_check" value="true"/>
-      </application>
-   </device>
-</driconf>
-
