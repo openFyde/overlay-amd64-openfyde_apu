@@ -1,0 +1,63 @@
+Preload the gallium megadriver in the AMD video sandbox hooks.
+
+Our Mesa >= 25 minigbm (openfyde-patches media-libs/minigbm patch 002)
+dlopen()s the gallium megadriver by soname "libgallium_dri.so" when it
+first allocates a buffer, which in the OOP video decoding utility happens
+INSIDE the hardware video decoding sandbox. The existing presandbox
+preload of /usr/lib64/dri/radeonsi_dri.so registers the object only under
+that path and its versioned SONAME (libgallium-<ver>.so), so ld.so cannot
+match the soname request and asks the file broker, which denies library
+paths. minigbm's amdgpu backend then fails init, GbmDeviceWrapper has no
+device, VaapiVideoDecoder cannot allocate its modifier-probing dummy
+buffer, and ALL hardware video decode in the utility dies silently (HEVC
+visibly, since it has no software fallback; H.264/VP9 fall back to SW).
+
+Fix: also dlopen the megadriver by that exact soname before entering the
+sandbox — glibc dedups by inode and records the name, so the in-sandbox
+dlopen resolves from memory. The preload is non-fatal: on Mesa <= 24 the
+soname does not exist and minigbm loads radeonsi_dri.so by absolute path
+(already preloaded), so AMD systems on older Mesa are unaffected. Same
+latent issue fixed in the encode hook (kUseOutOfProcessVideoEncoding is
+default-off today).
+
+--- a/media/gpu/sandbox/hardware_video_decoding_sandbox_hook_linux.cc
++++ b/media/gpu/sandbox/hardware_video_decoding_sandbox_hook_linux.cc
+@@ -151,6 +151,20 @@
+     return false;
+   }
+ 
++  // FydeOS: our Mesa >= 25 minigbm (openfyde-patches minigbm patch 002) loads
++  // the gallium megadriver by soname ("libgallium_dri.so", minigbm dri.c) when
++  // it first allocates inside the sandbox. The preload above registers the
++  // driver only under the radeonsi_dri.so path and its versioned SONAME
++  // (libgallium-<ver>.so), so dlopen it under the soname minigbm asks for as
++  // well; the in-sandbox dlopen() then resolves from the already-loaded object
++  // instead of hitting the (denied) file broker. The soname does not exist on
++  // Mesa <= 24 installs, where minigbm loads radeonsi_dri.so by absolute path
++  // (already preloaded above), so failure to preload it is not fatal.
++  if (nullptr == dlopen("libgallium_dri.so", kDlopenFlags)) {
++    LOG(WARNING) << "dlopen(libgallium_dri.so) failed with error: "
++                 << dlerror();
++  }
++
+   // minigbm may use the DRI driver (requires Mesa 24.0 or older) or the
+   // Vulkan driver (requires VK_EXT_image_drm_format_modifier).  Preload the
+   // Vulkan driver as well but ignore failures.
+--- a/media/gpu/sandbox/hardware_video_encoding_sandbox_hook_linux.cc
++++ b/media/gpu/sandbox/hardware_video_encoding_sandbox_hook_linux.cc
+@@ -125,6 +125,15 @@
+       return false;
+     }
+ 
++    // FydeOS: preload the gallium megadriver under the soname our Mesa >= 25
++    // minigbm dlopen()s inside the sandbox (see the equivalent preload and
++    // rationale in hardware_video_decoding_sandbox_hook_linux.cc). Missing on
++    // Mesa <= 24 installs, so not fatal.
++    if (nullptr == dlopen("libgallium_dri.so", kDlopenFlags)) {
++      LOG(WARNING) << "dlopen(libgallium_dri.so) failed with error: "
++                   << dlerror();
++    }
++
+     // minigbm may use the DRI driver (requires Mesa 24.0 or older) or the
+     // Vulkan driver (requires VK_EXT_image_drm_format_modifier).  Preload the
+     // Vulkan driver as well but ignore failures.
